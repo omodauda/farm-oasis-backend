@@ -12,6 +12,7 @@
     },
     "rules": {
         "no-console": "warn",
-        "camelcase": "off"
+        "camelcase": "off",
+        "no-unused-vars":"warn"
     }
 }

@@ -1,7 +1,10 @@
-import express from 'express';
+import dotenv from 'dotenv';
+import regeneratorRuntime from 'regenerator-runtime';
+import app from './app';
 
-const app = express();
+dotenv.config();
+const { PORT } = process.env;
 
-app.listen(3000, () => {
-  console.log('app is listening on port 3000');
+app.listen(PORT, () => {
+  console.log(`app is listening on port ${PORT}`);
 });
