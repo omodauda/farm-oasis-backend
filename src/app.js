@@ -1,10 +1,13 @@
 import express from 'express';
 import { sequelize } from './database/models';
+import routes from './routes';
 
 const app = express();
 const ENV = process.env.NODE_ENV;
 
 app.use(express.json());
+
+app.use('/api/v1/', routes);
 
 async function init_db() {
   if (ENV === 'development') {
