@@ -1,6 +1,7 @@
 import { sequelize, Auth, User } from '../../database/models';
 import UserService from '../../services/user';
 import generateReferralCode from '../../helpers/referralCode';
+import signToken from '../../helpers/jwt';
 import { successMsg, errorMsg } from '../../utils/response';
 
 export default class UserController {
@@ -30,7 +31,10 @@ export default class UserController {
           referralCode,
         }, { transaction: t });
 
+        const token = await signToken(auth);
+
         const data = {
+          token,
           authId: auth.id,
           email: user.email,
           firstName: user.firstName,
