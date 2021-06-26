@@ -1,4 +1,6 @@
 'use strict';
+const { async } = require('regenerator-runtime');
+import bcrypt from 'bcryptjs';
 const {
   Model, BOOLEAN
 } = require('sequelize');
@@ -36,7 +38,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     isAdmin: {
       type: BOOLEAN,
-      allowNull: false
+      allowNull: false,
+      defaultValue: false
     },
     confirmToken: {
       type: DataTypes.INTEGER,
@@ -45,6 +48,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER
     },
   }, {
+    hooks: {
+      beforeCreate: async(user, options) => {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(user.password, salt);
+        user.password = hashedPassword;
+      }
+    },
     sequelize,
     modelName: 'Auth',
   });
