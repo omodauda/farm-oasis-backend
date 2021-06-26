@@ -1,6 +1,7 @@
 import { sequelize, Auth, User } from '../../database/models';
 import UserService from '../../services/user';
 import generateReferralCode from '../../helpers/referralCode';
+import { successMsg, errorMsg } from '../../utils/response';
 
 export default class UserController {
   static async createUser(req, res) {
@@ -13,13 +14,9 @@ export default class UserController {
       const emailExist = await UserService.emailExist(Email);
 
       if (emailExist) {
-        return res
-          .status(200)
-          .json({
-            status: 'success',
-            message: `user with email ${email} already exist`,
-          });
+        return errorMsg(res, 400, `email ${email} already exist`);
       }
+
       const confirmToken = Math.floor(Math.random() * 1000000) + 1;
       const referralCode = await generateReferralCode(firstName, lastName);
 
@@ -43,22 +40,11 @@ export default class UserController {
           referralCode: user.referralCode,
         };
 
-        return res
-          .status(200)
-          .json({
-            status: 'success',
-            message: 'user registered successfully',
-            data,
-          });
+        return successMsg(res, 201, 'user registered sucessfully', data);
       });
       return result;
     } catch (error) {
-      return res
-        .status(500)
-        .json({
-          status: 'fail',
-          error: error.message,
-        });
+      return errorMsg(res, 500, 'internal server error');
     }
   }
 }
