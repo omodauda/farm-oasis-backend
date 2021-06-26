@@ -10,4 +10,9 @@ export default class User {
     const response = await userModel.findOne({ where: { referralCode } });
     return response;
   }
+
+  static async userByAuthId(authId) {
+    const response = await userModel.findOne({ where: { authId } });
+    return response;
+  }
 }
