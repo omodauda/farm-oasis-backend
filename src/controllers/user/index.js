@@ -36,6 +36,8 @@ export default class UserController {
         const data = {
           token,
           authId: auth.id,
+          isAdmin: auth.isAdmin,
+          isVerified: auth.isVerified,
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,

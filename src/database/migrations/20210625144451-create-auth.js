@@ -22,6 +22,11 @@ module.exports = {
         allowNull: false,
         defaultValue: false
       },
+      isVerified: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
       confirmToken: {
         type: Sequelize.INTEGER
       },
