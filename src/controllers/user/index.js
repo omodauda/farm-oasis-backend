@@ -92,4 +92,41 @@ export default class UserController {
       return errorMsg(res, 500, 'internal server error');
     }
   }
+
+  static async verifyUser(req, res) {
+    const { id, isVerified } = req.user;
+    if (isVerified) {
+      return errorMsg(res, 400, 'user is already verified');
+    }
+    try {
+      const { confirmToken } = req.body;
+
+      if (req.user.confirmToken !== confirmToken) {
+        return errorMsg(res, 400, 'invaild confirmation token');
+      }
+      await UserService.confirmEmail(id);
+      return successMsg(res, 200, 'email successfully confirmed');
+    } catch (error) {
+      return errorMsg(res, 500, 'internal server error');
+    }
+  }
+
+  static async resendConfirmationToken(req, res) {
+    const { id, isVerified, email } = req.user;
+    try {
+      if (isVerified) {
+        return errorMsg(res, 400, 'user is already verified');
+      }
+      const newConfirmToken = Math.floor(Math.random() * 1000000) + 1;
+      await Auth.update({ confirmToken: newConfirmToken }, {
+        where: {
+          id,
+        },
+      });
+      await sendVerificationEmail(email, newConfirmToken);
+      return successMsg(res, 200, 'check your email for new confirmation token');
+    } catch (error) {
+      return errorMsg(res, 500, 'internal server error');
+    }
+  }
 }

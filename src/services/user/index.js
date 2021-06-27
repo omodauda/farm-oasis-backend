@@ -15,4 +15,13 @@ export default class User {
     const response = await userModel.findOne({ where: { authId } });
     return response;
   }
+
+  static async confirmEmail(id) {
+    const response = await Auth.update({ isVerified: true }, {
+      where: {
+        id,
+      },
+    });
+    return response;
+  }
 }
