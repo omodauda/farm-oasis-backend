@@ -1,20 +1,21 @@
 import { Router } from 'express';
 import UserController from '../../controllers/user';
 import authenticate from '../../middlewares/auth';
+import { validateBody, schema } from '../../validations';
 
 const router = new Router();
 
 router
   .route('/user/signup')
-  .post(UserController.createUser);
+  .post(validateBody(schema.signup), UserController.createUser);
 
 router
   .route('/user/login')
-  .post(UserController.loginUser);
+  .post(validateBody(schema.login), UserController.loginUser);
 
 router
   .route('/user/verify')
-  .post(authenticate, UserController.verifyUser);
+  .post(validateBody(schema.verifyUser), authenticate, UserController.verifyUser);
 
 router
   .route('/user/resend-token')
