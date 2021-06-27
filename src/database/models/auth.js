@@ -47,10 +47,10 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false
     },
     confirmToken: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
     },
     resetToken: {
-      type: DataTypes.INTEGER
+      type: DataTypes.STRING
     },
   }, {
     hooks: {

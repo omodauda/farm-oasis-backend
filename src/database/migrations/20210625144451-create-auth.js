@@ -28,10 +28,10 @@ module.exports = {
         defaultValue: false
       },
       confirmToken: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       resetToken: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
