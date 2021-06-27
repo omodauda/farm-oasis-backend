@@ -4,6 +4,7 @@ import UserService from '../../services/user';
 import generateReferralCode from '../../helpers/referralCode';
 import signToken from '../../helpers/jwt';
 import { successMsg, errorMsg } from '../../utils/response';
+import sendVerificationEmail from '../../services/email';
 
 export default class UserController {
   static async createUser(req, res) {
@@ -32,6 +33,8 @@ export default class UserController {
           referralCode,
         }, { transaction: t });
 
+        await sendVerificationEmail(email, confirmToken);
+
         const token = await signToken(auth);
 
         const data = {
@@ -43,7 +46,6 @@ export default class UserController {
           firstName: user.firstName,
           lastName: user.lastName,
           phone: user.phone,
-          confirmToken: auth.confirmToken,
           referralCode: user.referralCode,
         };
 
