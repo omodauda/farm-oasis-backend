@@ -4,7 +4,7 @@ import { Auth } from '../database/models';
 
 // eslint-disable-next-line consistent-return
 export default async function authenticate(req, res, next) {
-  if (!req.headers.authorization) {
+  if (!req.headers.authorization || req.headers.authorization === undefined) {
     return errorMsg(res, 401, 'unauthorized request');
   }
 

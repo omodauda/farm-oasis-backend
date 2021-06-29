@@ -4,7 +4,7 @@ import UserService from '../../services/user';
 import generateReferralCode from '../../helpers/referralCode';
 import signToken from '../../helpers/jwt';
 import { successMsg, errorMsg } from '../../utils/response';
-import sendVerificationEmail from '../../services/email';
+import { sendVerificationEmail, sendResetTokenEmail } from '../../services/email';
 
 export default class UserController {
   static async createUser(req, res) {
@@ -42,7 +42,7 @@ export default class UserController {
           authId: auth.id,
           isAdmin: auth.isAdmin,
           isVerified: auth.isVerified,
-          email: user.email,
+          email: auth.email,
           firstName: user.firstName,
           lastName: user.lastName,
           phone: user.phone,
@@ -64,7 +64,7 @@ export default class UserController {
       const emailExist = await UserService.emailExist(Email);
 
       if (!emailExist) {
-        return errorMsg(res, 400, `${email} not registered`);
+        return errorMsg(res, 400, `${email} is not registered`);
       }
 
       const isValidPassword = await bcrypt.compare(password, emailExist.password);
@@ -81,7 +81,7 @@ export default class UserController {
         authId,
         isAdmin,
         isVerified,
-        email: user.email,
+        email: emailExist.email,
         firstName: user.firstName,
         lastName: user.lastName,
         phone: user.phone,
@@ -102,7 +102,7 @@ export default class UserController {
       const { confirmToken } = req.body;
 
       if (req.user.confirmToken !== confirmToken) {
-        return errorMsg(res, 400, 'invaild confirmation token');
+        return errorMsg(res, 400, 'invalid confirmation token');
       }
       await UserService.confirmEmail(id);
       return successMsg(res, 200, 'email successfully confirmed');
@@ -125,6 +125,50 @@ export default class UserController {
       });
       await sendVerificationEmail(email, newConfirmToken);
       return successMsg(res, 200, 'check your email for new confirmation token');
+    } catch (error) {
+      return errorMsg(res, 500, 'internal server error');
+    }
+  }
+
+  static async forgetPassword(req, res) {
+    const { email } = req.body;
+    const Email = email.toLowerCase();
+    try {
+      const emailExist = await UserService.emailExist(Email);
+      if (!emailExist) {
+        return errorMsg(res, 400, `email ${email} is not registered`);
+      }
+      const resetToken = Math.floor(Math.random() * 1000000) + 1;
+      await Auth.update({ resetToken }, {
+        where: {
+          email: emailExist.email,
+        },
+      });
+      await sendResetTokenEmail(emailExist.email, resetToken);
+      return successMsg(res, 200, 'check your email for password reset token');
+    } catch (error) {
+      return errorMsg(res, 500, 'internal server error');
+    }
+  }
+
+  static async resetPassword(req, res) {
+    const { email, resetToken, newPassword } = req.body;
+    try {
+      const auth = await Auth.findOne({ where: { email } });
+
+      if (auth.resetToken !== resetToken) {
+        return errorMsg(res, 400, 'invalid reset token');
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+
+      await Auth.update({ password: hashedNewPassword }, {
+        where: {
+          email,
+        },
+      });
+      return successMsg(res, 200, 'password reset successful');
     } catch (error) {
       return errorMsg(res, 500, 'internal server error');
     }

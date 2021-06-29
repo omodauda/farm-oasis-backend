@@ -21,4 +21,12 @@ router
   .route('/user/resend-token')
   .get(authenticate, UserController.resendConfirmationToken);
 
+router
+  .route('/user/forget-password')
+  .post(validateBody(schema.forgetPassword), UserController.forgetPassword);
+
+router
+  .route('/user/reset-password')
+  .post(validateBody(schema.resetPassword), UserController.resetPassword);
+
 export default router;

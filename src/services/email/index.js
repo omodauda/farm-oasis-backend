@@ -42,4 +42,17 @@ const sendVerificationEmail = async (email, token) => {
   }
 };
 
-export default sendVerificationEmail;
+const sendResetTokenEmail = async (email, token) => {
+  try {
+    const receipient = email;
+    const subject = 'Farm Oasis Password Reset Token';
+    const html = `
+            Your password reset token: ${token}
+        `;
+    await sendMail(receipient, subject, html);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export { sendVerificationEmail, sendResetTokenEmail };

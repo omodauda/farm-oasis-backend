@@ -92,6 +92,49 @@ const schema = {
         'string.min': 'confirmation token should have a minimum length of 6',
       }),
   }),
+
+  forgetPassword: Joi.object().keys({
+    email: Joi.string()
+      .email({ minDomainSegments: 2 })
+      .min(5)
+      .max(100)
+      .required()
+      .messages({
+        'string.empty': 'email cannot be an empty field',
+        'string.email': 'please enter a valid email',
+        'any.required': 'email is required',
+      }),
+  }),
+
+  resetPassword: Joi.object().keys({
+    email: Joi.string()
+      .email({ minDomainSegments: 2 })
+      .min(5)
+      .max(100)
+      .required()
+      .messages({
+        'string.empty': 'email cannot be an empty field',
+        'string.email': 'please enter a valid email',
+        'any.required': 'email is required',
+      }),
+    resetToken: Joi.string()
+      .min(6)
+      .required()
+      .messages({
+        'any.required': 'reset token is required',
+        'string.empty': 'reset token cannot be an empty field',
+        'string.min': 'reset token should have a minimum length of 6',
+      }),
+    newPassword: Joi.string()
+      .min(5)
+      .max(20)
+      .required()
+      .messages({
+        'any.required': 'password is required',
+        'string.empty': 'password cannot be an empty field',
+        'string.min': 'password should have a minimum length of 5',
+      }),
+  }),
 };
 
 export { validateBody, schema };
