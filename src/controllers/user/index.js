@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import { sequelize, Auth, User } from '../../database/models';
 import UserService from '../../services/user';
 import generateReferralCode from '../../helpers/referralCode';
-import signToken from '../../helpers/jwt';
+import { signToken, signRefreshToken, regenerateAccessToken } from '../../helpers/jwt';
 import { successMsg, errorMsg } from '../../utils/response';
 import { sendVerificationEmail, sendResetTokenEmail } from '../../services/email';
 
@@ -36,9 +36,11 @@ export default class UserController {
         await sendVerificationEmail(email, confirmToken);
 
         const token = await signToken(auth);
+        const refreshToken = await signRefreshToken(auth);
 
         const data = {
           token,
+          refreshToken,
           authId: auth.id,
           isAdmin: auth.isAdmin,
           isVerified: auth.isVerified,
@@ -75,9 +77,11 @@ export default class UserController {
       const { id: authId, isAdmin, isVerified } = emailExist;
       const user = await UserService.userByAuthId(authId);
       const token = await signToken(emailExist);
+      const refreshToken = await signRefreshToken(emailExist);
 
       const data = {
         token,
+        refreshToken,
         authId,
         isAdmin,
         isVerified,
@@ -169,6 +173,16 @@ export default class UserController {
         },
       });
       return successMsg(res, 200, 'password reset successful');
+    } catch (error) {
+      return errorMsg(res, 500, 'internal server error');
+    }
+  }
+
+  static async refreshAccessToken(req, res) {
+    const { refreshToken } = req.body;
+    try {
+      const accessToken = await regenerateAccessToken(refreshToken);
+      return successMsg(res, 200, 'new access token generated', accessToken);
     } catch (error) {
       return errorMsg(res, 500, 'internal server error');
     }

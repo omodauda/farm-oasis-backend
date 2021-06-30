@@ -29,4 +29,8 @@ router
   .route('/user/reset-password')
   .post(validateBody(schema.resetPassword), UserController.resetPassword);
 
+router
+  .route('/user/refresh-token')
+  .post(UserController.refreshAccessToken);
+
 export default router;
