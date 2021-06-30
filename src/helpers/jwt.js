@@ -5,6 +5,5 @@ export default function signToken(user) {
     iss: 'omodauda',
     sub: user.id,
     iat: new Date().getTime(),
-    expiresIn: '1d',
-  }, process.env.JWT_SECRET);
+  }, process.env.JWT_SECRET, { expiresIn: '1d' });
 }

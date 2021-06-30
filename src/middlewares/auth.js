@@ -11,9 +11,13 @@ export default async function authenticate(req, res, next) {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const decoded = await jwtr.verify(token, process.env.JWT_SECRET);
+    if (decoded.exp < Date.now()) {
+      return errorMsg(res, 401, 'access token expired');
+    }
     req.user = await Auth.findByPk(decoded.sub);
+    req.user.jti = decoded.jti;
     next();
   } catch (error) {
-    return errorMsg(res, 500, 'internal server error');
+    return errorMsg(res, 500, error);
   }
 }
