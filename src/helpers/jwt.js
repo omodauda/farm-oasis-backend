@@ -1,15 +1,15 @@
-import jwtr from '../utils/jwtr';
+// import jwtr from '../utils/jwtr';
+import jwt from 'jsonwebtoken';
 
 export function signToken(user) {
-  return jwtr.sign({
+  return jwt.sign({
     iss: 'omodauda',
     sub: user.id,
-    iat: new Date().getTime(),
   }, process.env.JWT_SECRET, { expiresIn: '1d' });
 }
 
 export function signRefreshToken(user) {
-  return jwtr.sign({
+  return jwt.sign({
     iss: 'omodauda',
     sub: user.id,
     iat: new Date().getTime(),
@@ -18,7 +18,7 @@ export function signRefreshToken(user) {
 
 export async function regenerateAccessToken(refreshToken) {
   try {
-    const decoded = await jwtr.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
     const user = {
       id: decoded.sub,
     };
