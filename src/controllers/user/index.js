@@ -35,8 +35,8 @@ export default class UserController {
 
         await sendVerificationEmail(email, confirmToken);
 
-        const token = await signToken(auth);
-        const refreshToken = await signRefreshToken(auth);
+        const token = signToken(auth);
+        const refreshToken = signRefreshToken(auth);
 
         const data = {
           token,
@@ -76,8 +76,8 @@ export default class UserController {
 
       const { id: authId, isAdmin, isVerified } = emailExist;
       const user = await UserService.userByAuthId(authId);
-      const token = await signToken(emailExist);
-      const refreshToken = await signRefreshToken(emailExist);
+      const token = signToken(emailExist);
+      const refreshToken = signRefreshToken(emailExist);
 
       const data = {
         token,
@@ -93,7 +93,34 @@ export default class UserController {
       };
       return successMsg(res, 200, 'login successful', data);
     } catch (error) {
-      return errorMsg(res, 500, 'internal server error');
+      return errorMsg(res, 500, error.message);
+    }
+  }
+
+  static async getUser(req, res) {
+    const { id } = req.user;
+    try {
+      const auth = await Auth.findByPk(id, { include: User });
+      const {
+        id: authId, email, isAdmin, isVerified, User: user,
+      } = auth;
+      const {
+        firstName, lastName, phone, referralCode,
+      } = user;
+
+      const data = {
+        authId,
+        isAdmin,
+        isVerified,
+        email,
+        firstName,
+        lastName,
+        phone,
+        referralCode,
+      };
+      return successMsg(res, 200, '', data);
+    } catch (error) {
+      return errorMsg(res, 400, 'internal server error');
     }
   }
 

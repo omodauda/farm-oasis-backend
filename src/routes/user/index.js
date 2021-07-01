@@ -14,6 +14,10 @@ router
   .post(validateBody(schema.login), UserController.loginUser);
 
 router
+  .route('/user')
+  .get(authenticate, UserController.getUser);
+
+router
   .route('/user/verify')
   .post(validateBody(schema.verifyUser), authenticate, UserController.verifyUser);
 
