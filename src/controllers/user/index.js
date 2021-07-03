@@ -211,7 +211,7 @@ export default class UserController {
       const accessToken = await regenerateAccessToken(refreshToken);
       return successMsg(res, 200, 'new access token generated', accessToken);
     } catch (error) {
-      return errorMsg(res, 500, 'internal server error');
+      return errorMsg(res, 500, error.message);
     }
   }
 }

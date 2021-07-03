@@ -1,5 +1,6 @@
 // import jwtr from '../utils/jwtr';
 import jwt from 'jsonwebtoken';
+import redisClient from '../utils/redis';
 
 export function signToken(user) {
   return jwt.sign({
@@ -9,21 +10,37 @@ export function signToken(user) {
 }
 
 export function signRefreshToken(user) {
-  return jwt.sign({
+  const refreshToken = jwt.sign({
     iss: 'omodauda',
     sub: user.id,
     iat: new Date().getTime(),
   }, process.env.JWT_REFRESH_SECRET, { expiresIn: '365d' });
+
+  // eslint-disable-next-line no-unused-vars
+  redisClient.get(user.id.toString(), (err, data) => {
+    if (err) throw err;
+
+    redisClient.set(user.id.toString(), JSON.stringify({ token: refreshToken }));
+  });
+  return refreshToken;
 }
 
+// eslint-disable-next-line consistent-return
 export async function regenerateAccessToken(refreshToken) {
-  try {
-    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+  // verify refreshToken
+  const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+  // verify if token is in store
+  const token = redisClient.get(decoded.sub.toString(), (err, data) => {
+    if (err) throw err;
+
+    if (data === null) throw new Error('invalid request: token is not recognized');
+    if (JSON.parse(data).token !== refreshToken) throw new Error('invalid request: token is not recognized');
+  });
+  if (token) {
     const user = {
       id: decoded.sub,
     };
     return signToken(user);
-  } catch (error) {
-    throw new Error(error);
   }
 }
