@@ -37,4 +37,8 @@ router
   .route('/user/refresh-token')
   .post(UserController.refreshAccessToken);
 
+router
+  .route('/user')
+  .patch(authenticate, UserController.updateUser);
+
 export default router;

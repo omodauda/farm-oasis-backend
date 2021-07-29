@@ -214,4 +214,18 @@ export default class UserController {
       return errorMsg(res, 500, error.message);
     }
   }
+
+  static async updateUser(req, res) {
+    const { id } = req.user;
+    try {
+      await User.update(req.body, {
+        where: {
+          authId: id,
+        },
+      });
+      return successMsg(res, 200, 'Update Successful');
+    } catch (error) {
+      return errorMsg(res, 500, error.message);
+    }
+  }
 }
