@@ -126,8 +126,6 @@ jobs:
             # zip the directory
             mkdir artifacts
             tar -zcvf artefacts/artifact.tar.gz --exclude=./artifacts .
-            echo $?
-            0
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
             mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
             cd .circleci/ansible
