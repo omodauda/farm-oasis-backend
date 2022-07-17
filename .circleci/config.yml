@@ -127,7 +127,7 @@ jobs:
             mkdir artifacts
             tar -zcvf artifacts/artifact.tar.gz --exclude=./artifacts .
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
-            mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
+            mv artifacts/artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
             cd .circleci/ansible
             echo "Contents of the inventory.txt file is -------"
             cat inventory.txt
