@@ -1,5 +1,5 @@
 Description: >
-  UdaPeople backend stack.
+  Farmoasis backend stack.
 
 Parameters:
   ID:
@@ -10,7 +10,7 @@ Resources:
   InstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub UdaPeople-${ID}
+      GroupName: !Sub Farmoasis-${ID}
       GroupDescription: Allow port 22 and port 8080.
       SecurityGroupIngress:
         - IpProtocol: tcp

@@ -1,0 +1,37 @@
+---
+
+- name: "configuration play." 
+  hosts: web
+  user: ubuntu
+  become: true
+  become_method: sudo
+  become_user: root  
+  gather_facts: false
+  vars:
+    - ansible_python_interpreter: /usr/bin/python3
+    - ansible_host_key_checking: false
+    - ansible_stdout_callback: yaml
+
+  pre_tasks:
+    - name: "wait 600 seconds for target connection to become reachable/usable."
+      wait_for_connection: # default 600
+
+    - name: "install python for Ansible."
+      apt:
+        name: python3
+        state: latest
+        update_cache: yes
+
+  # Get the environment variables from CircleCI and add to the EC2 instance
+  environment:
+    - NODE_ENV: "{{ lookup('env', 'NODE_ENV')}}"
+    - DATABASE_URL: "{{ lookup('env', 'DATABASE_URL')}}"
+    - JWT_SECRET: "{{ lookup('env', 'JWT_SECRET')}}"
+    - JWT_REFRESH_SECRET: "{{ lookup('env', 'JWT_REFRESH_SECRET')}}"
+    - JWT_REFRESH_SECRET: "{{ lookup('env', 'JWT_REFRESH_SECRET')}}"
+    - NODEMAILER_EMAIL: "{{ lookup('env', 'NODEMAILER_EMAIL')}}"
+    - NODEMAILER_PASSWORD: "{{ lookup('env', 'NODEMAILER_PASSWORD')}}"
+    - REDISCLOUD_URL: "{{ lookup('env', 'REDISCLOUD_URL')}}"
+
+  roles:
+    - configure-server
