@@ -121,10 +121,13 @@ jobs:
       - run:
           name: Deploy backend
           command: |
-            # npm install
-            # npm run build
+            npm install
+            npm run build
             # zip the directory
-            tar -C . -czvf artifact.tar.gz .
+            touch artifact.tar.gz
+            tar --exclude=artifact.tar.gz -czvf artifact.tar.gz .
+            echo $?
+            0
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
             mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
             cd .circleci/ansible
