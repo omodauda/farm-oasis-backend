@@ -124,8 +124,8 @@ jobs:
             npm install
             npm run build
             # zip the directory
-            touch artifact.tar.gz
-            tar --exclude=artifact.tar.gz -czvf artifact.tar.gz .
+            mkdir artifacts
+            tar -zcvf artefacts/artifact.tar.gz --exclude=./artifacts .
             echo $?
             0
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
