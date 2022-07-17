@@ -111,6 +111,8 @@ jobs:
           fingerprints: ["18:39:04:07:48:73:4e:73:37:fe:21:9b:b8:66:e6:97"]
       - attach_workspace:
           at: ~/
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Install dependencies
           command: |
@@ -119,8 +121,8 @@ jobs:
       - run:
           name: Deploy backend
           command: |
-            npm install
-            npm run build
+            # npm install
+            # npm run build
             # zip the directory
             tar -C . -czvf artifact.tar.gz .
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
