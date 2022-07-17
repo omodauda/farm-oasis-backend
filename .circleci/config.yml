@@ -21,8 +21,8 @@ jobs:
       - image: cimg/node:16.15.1
     steps:
       - checkout
-      # - restore_cache:
-      #     keys: [backend-build]
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: install dependencies
           command: |
