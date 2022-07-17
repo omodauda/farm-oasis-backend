@@ -26,7 +26,7 @@ jobs:
       - run:
           name: Back-end build
           command: |
-            npm update
+            npm install --save-dev @babel/core @babel/cli @babel/preset-env
             npm install
             npm run build
       - save_cache:
