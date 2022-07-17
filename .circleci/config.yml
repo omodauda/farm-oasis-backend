@@ -24,16 +24,13 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run:
-          name: install dependencies
+          name: Back-end build
           command: |
             npm install
+            npm run build
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
-      - run:
-          name: Back-end build
-          command: |
-            npm run build
 
   scan-backend:
     docker:
@@ -108,9 +105,9 @@ workflows:
   default:
     jobs:
       - build-backend
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - deploy-infrastructure:
-      #     requires: [scan-backend]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
+      - scan-backend:
+          requires: [build-backend]
+      - deploy-infrastructure:
+          requires: [scan-backend]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
