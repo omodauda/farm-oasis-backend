@@ -7,6 +7,12 @@ const ENV = process.env.NODE_ENV;
 
 app.use(express.json());
 
+app.get('/home', (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'welcome to farm oasis',
+  });
+});
 app.use('/api/v1/', routes);
 
 async function init_db() {
