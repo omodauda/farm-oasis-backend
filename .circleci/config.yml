@@ -18,7 +18,22 @@ jobs:
           paths: [backend/node_modules]
           key: backend-build
 
+  scan-backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: scan backend for security vulnerabilities
+          command: |
+            npm install
+            npm audit fix
+
 workflows:
   default:
     jobs:
       - build-backend
+      - scan-backend:
+          requires: [build-backend]
