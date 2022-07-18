@@ -43,7 +43,7 @@ jobs:
           name: scan backend for security vulnerabilities
           command: |
             npm install
-            npm audit fix
+            npm audit fix --audit-level=critical --force
 
   deploy-infrastructure:
     docker:
