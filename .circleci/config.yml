@@ -26,6 +26,7 @@ jobs:
       - run:
           name: Back-end build
           command: |
+            cd backend
             npm install
             npm run build
       - save_cache:
@@ -42,6 +43,7 @@ jobs:
       - run:
           name: scan backend for security vulnerabilities
           command: |
+            cd backend
             npm install
             npm audit fix --audit-level=critical --force
 
@@ -68,12 +70,12 @@ jobs:
             echo $(aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters Name=tag:aws:cloudformation:stack-name,Values=farmoasis-backend-${CIRCLE_WORKFLOW_ID:0:7} \
-            --output text) >> ~/project/.circleci/ansible/inventory
-            cat ~/project/.circleci/ansible/inventory
+            --output text) >> ~/project/.circleci/ansible/inventory.txt
+            cat ~/project/.circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/.circleci/ansible/inventory
+            - project/.circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -90,7 +92,7 @@ jobs:
       - run:
           name: verify ip address
           command: |
-            cat .circleci/ansible/inventory
+            cat .circleci/ansible/inventory.txt
       - run:
           name: install dependencies
           command: |
@@ -100,8 +102,8 @@ jobs:
           name: configure server
           command: |
             cd .circleci/ansible
-            cat inventory
-            ansible-playbook -i inventory configure-server.yml
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yml
       # Here's where you will add some code to rollback on failure
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
