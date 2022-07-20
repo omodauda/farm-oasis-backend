@@ -90,7 +90,7 @@ jobs:
       - run:
           name: verify ip address
           command: |
-            cat project/.circleci/ansible/inventory.txt
+            cat .circleci/ansible/inventory.txt
       - run:
           name: install dependencies
           command: |
