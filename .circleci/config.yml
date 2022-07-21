@@ -12,7 +12,7 @@ commands:
           when: on_fail
           command: |
             aws cloudformation delete-stack \
-            --stack-name udapeople-backend-<<parameters.workflow_id>>
+            --stack-name farmoasis-backend-<<parameters.workflow_id>>
 
 jobs:
 
@@ -26,7 +26,6 @@ jobs:
       - run:
           name: Back-end build
           command: |
-            cd backend
             npm install
             npm run build
       - save_cache:
@@ -43,7 +42,6 @@ jobs:
       - run:
           name: scan backend for security vulnerabilities
           command: |
-            cd backend
             npm install
             npm audit fix --audit-level=critical --force
 
@@ -71,7 +69,6 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters Name=tag:aws:cloudformation:stack-name,Values=farmoasis-backend-${CIRCLE_WORKFLOW_ID:0:7} \
             --output text) >> ~/project/.circleci/ansible/inventory.txt
-            cat ~/project/.circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
@@ -82,22 +79,21 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: python:3.7-alpine3.16
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["18:39:04:07:48:73:4e:73:37:fe:21:9b:b8:66:e6:97"]
+       - run:
+          name: install dependencies
+          command: |
+            apk add --update tar gzip ansible aws-cli
       - attach_workspace:
           at: ~/
       - run:
           name: verify ip address
           command: |
             cat .circleci/ansible/inventory.txt
-      - run:
-          name: install dependencies
-          command: |
-            apk add --update tar gzip ansible
-            pip install awscli
       - run:
           name: configure server
           command: |
