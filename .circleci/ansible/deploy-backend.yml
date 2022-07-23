@@ -12,6 +12,7 @@
   # Get the environment variables from CircleCI and add to the EC2 instance
   environment:
     - DATABASE_URL: "{{ lookup('env', 'DATABASE_URL')}}"
+    - PORT: "{{ lookup('env', 'PORT')}}"
     - JWT_SECRET: "{{ lookup('env', 'JWT_SECRET')}}"
     - JWT_REFRESH_SECRET: "{{ lookup('env', 'JWT_REFRESH_SECRET')}}"
     - JWT_REFRESH_SECRET: "{{ lookup('env', 'JWT_REFRESH_SECRET')}}"
