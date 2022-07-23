@@ -126,10 +126,9 @@ jobs:
             npm install
             npm run build
             # zip the directory
-            mkdir artifacts
-            tar -zcvf artifacts/artifact.tar.gz --exclude=./artifacts .
+            tar -czvf artifact.tar.gz .
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
-            mv artifacts/artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
+            mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
             cd .circleci/ansible
             echo "Contents of the inventory.txt file is -------"
             cat inventory.txt
