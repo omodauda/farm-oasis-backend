@@ -126,7 +126,13 @@ jobs:
             npm install
             npm run build
             # zip the directory
+            set +e
             tar -czvf artifact.tar.gz .
+            exitcode=$?
+            if [ "$exitcode" != "1" ] && [ "$exitcode" != "0" ]; then
+              exit $exitcode
+            fi
+            set -e
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
             mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
             cd .circleci/ansible
