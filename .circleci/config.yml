@@ -26,6 +26,7 @@ jobs:
       - run:
           name: Back-end build
           command: |
+            cd backend
             npm install
             npm run build
       - save_cache:
@@ -42,6 +43,7 @@ jobs:
       - run:
           name: scan backend for security vulnerabilities
           command: |
+            cd backend
             npm install
             npm audit fix --audit-level=critical --force
 
@@ -123,16 +125,12 @@ jobs:
       - run:
           name: Deploy backend
           command: |
+            cd backend
             npm install
             npm run build
+            cd ..
             # zip the directory
-            set +e
-            tar -czvf artifact.tar.gz .
-            exitcode=$?
-            if [ "$exitcode" != "1" ] && [ "$exitcode" != "0" ]; then
-              exit $exitcode
-            fi
-            set -e
+            tar -C backend -czvf artifact.tar.gz .
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
             mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
             cd .circleci/ansible
