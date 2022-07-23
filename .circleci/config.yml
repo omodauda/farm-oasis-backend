@@ -89,7 +89,7 @@ jobs:
           command: |
             apk add --update tar gzip ansible aws-cli
       - attach_workspace:
-          at: ~/
+          at: ~/project
       - run:
           name: verify ip address
           command: |
