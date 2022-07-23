@@ -68,11 +68,11 @@ jobs:
             echo $(aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters Name=tag:aws:cloudformation:stack-name,Values=farmoasis-backend-${CIRCLE_WORKFLOW_ID:0:7} \
-            --output text) >> ~/project/.circleci/ansible/inventories/inventory.txt
+            --output text) >> ~/project/.circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/.circleci/ansible/inventories/inventory.txt
+            - project/.circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -93,13 +93,13 @@ jobs:
       - run:
           name: verify ip address
           command: |
-            cat .circleci/ansible/inventories/inventory.txt
+            cat .circleci/ansible/inventory.txt
       - run:
           name: configure server
           command: |
             cd .circleci/ansible
-            cat inventories/inventory.txt
-            ansible-playbook -i inventories/inventory.txt configure-server.yml
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yml
       # Here's where you will add some code to rollback on failure
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
