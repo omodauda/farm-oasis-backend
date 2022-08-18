@@ -165,7 +165,7 @@ export default class UserController {
       if (isVerified) {
         return errorMsg(res, 400, 'user is already verified');
       }
-      const newConfirmToken = Math.floor(Math.random() * 1000000) + 1;
+      const newConfirmToken = 123456;
       await Auth.update(
         { confirmToken: newConfirmToken },
         {
@@ -193,7 +193,7 @@ export default class UserController {
       if (!emailExist) {
         return errorMsg(res, 400, `email ${email} is not registered`);
       }
-      const resetToken = Math.floor(Math.random() * 1000000) + 1;
+      const resetToken = 123456;
       await Auth.update(
         { resetToken },
         {
